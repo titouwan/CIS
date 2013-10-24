@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# https://benchmarks.cisecurity.org/tools2/linux/CIS_Red_Hat_Enterprise_Linux_6_Benchmark_v1.2.0.pdf
-
 VERB=1
 #DEBUG=1
 score=0
