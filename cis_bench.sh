@@ -48,7 +48,12 @@ function out {
 	fi
 }
 
-clear
+# Make sure only root can run our script
+if [[ $EUID -ne 0 ]]
+then
+	echo "This script must be run as root" 1>&2
+	exit 1
+fi
 
 ### 1 - Install Updates, Patches and Additional Security Software ###
 echo "### 1 - Install Updates, Patches and Additional Security Software"
