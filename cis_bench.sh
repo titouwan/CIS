@@ -53,6 +53,20 @@ then
 	exit 1
 fi
 
+# Make sure that we are on RHEL6 OS
+if [ ! -f /etc/redhat-release ]
+then
+	echo "This script must be run on RHEL"
+	exit 2
+else
+	grep Santiago /etc/redhat-release
+	if [ $? -ne 0 ]
+	then
+		echo "This script must be run on version 6 of RHEL"
+		exit 2
+	fi
+fi
+
 ### 1 - Install Updates, Patches and Additional Security Software ###
 echo "### 1 - Install Updates, Patches and Additional Security Software"
 
