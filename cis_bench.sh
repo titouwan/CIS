@@ -1368,6 +1368,66 @@ do
 done
 out $x $INT
 
+INT='10.2 Check "From" statement in authorized_keys files'
+users=`egrep -v '(root|halt|sync|shutdown)' /etc/passwd |awk -F: '($7 != "/sbin/nologin") { print $1 }'`
+ret=`grep ^AuthorizedKeysFile /etc/ssh/sshd_config|awk '{print $2}'`
+if [ $? -ne 0 ]
+then
+        ret=".ssh/authorized_keys"
+fi
+
+if [[ $ret =~ (\%[a-z]) ]]
+then
+        case ${BASH_REMATCH[1]} in
+        "%u")   x=0
+                for user in $users
+                do
+                        auth_file=`echo $ret| sed s/\%u/$user/`
+                        if [ -f $auth_file ]
+                        then
+                                err=`grep "^from=" $auth_file`
+                                if [ $? -ne 0 ]
+                                then
+                                        let x=$x+1
+                                fi
+                        fi
+                done
+                ;;
+        "%h")   x=0
+                for user in $users
+                do
+                        home1=`grep "^$user:" /etc/passwd|awk -F: '{print $6}'`
+                        home=`echo $home1 |sed "s/\//\\\\\\\\\//g"`
+                        auth_file=`echo $ret| sed s/\%h/$home/`
+                        if [ -f $auth_file ]
+                        then
+                                err=`grep "^from=" $auth_file`
+                                if [ $? -ne 0 ]
+                                then
+                                        let x=$x+1
+                                fi
+                        fi
+                done
+                ;;
+        *)      exit 0
+                ;;
+        esac
+else
+        x=0
+        for user in $users
+        do
+                home=`grep "^$user:" /etc/passwd|awk -F: '{print $6}'`
+                if [ -f $home/.ssh/authorized_keys ]
+                then
+                        ret=`grep "^from=" $home/.ssh/authorized_keys`
+                        if [ $? -ne 0 ]
+                        then
+                                let x=$x+1
+                        fi
+                fi
+        done
+fi
+out $x $INT
 
 
 echo
