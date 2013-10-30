@@ -1375,7 +1375,6 @@ if [ $? -ne 0 ]
 then
         ret=".ssh/authorized_keys"
 fi
-
 if [[ $ret =~ (\%[a-z]) ]]
 then
         case ${BASH_REMATCH[1]} in
@@ -1429,6 +1428,13 @@ else
 fi
 out $x $INT
 
+INT='10.3.1 Verify that syslocation is provided'
+grep -i "^syslocation" /etc/snmp/snmpd.conf > /dev/null
+out $? $INT
+
+INT='10.3.2 Verify that syscontact is provided'
+grep -i "^syscontact" /etc/snmp/snmpd.conf > /dev/null
+out $? $INT
 
 echo
 echo " ==> Score: $score"
