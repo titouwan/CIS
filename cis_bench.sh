@@ -1471,18 +1471,23 @@ done
 out $x $INT
 
 INT='10.5.2 Check for nosuid nfs client mount option in autofs'
-LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
-LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
-x=0
-for i in $LIST
-do
-	for j in `grep nfs $i`
+if [ -f /etc/auto.master ]
+then
+	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+	LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
+	x=0
+	for i in $LIST
 	do
-		echo $i| grep nosuid > /dev/null
-        	let x=$x+$?	
+		for j in `grep nfs $i`
+		do
+			echo $i| grep nosuid > /dev/null
+        		let x=$x+$?	
+		done
 	done
-done
-out $x $INT
+	out $x $INT
+else
+	out 0 $INT
+fi
 
 
 INT='10.5.3 Check for nodev nfs client mount option'
@@ -1495,18 +1500,23 @@ done
 out $x $INT
 
 INT='10.5.4 Check for nodev nfs client mount option in autofs'
-LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
-LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
-x=0
-for i in $LIST
-do
-	for j in `grep nfs $i`
-        do
-                echo $i| grep nodev > /dev/null
-                let x=$x+$?
-        done
-done
-out $x $INT
+if [ -f /etc/auto.master ]
+then
+	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+	LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
+	x=0
+	for i in $LIST
+	do
+		for j in `grep nfs $i`
+        	do
+                	echo $i| grep nodev > /dev/null
+                	let x=$x+$?
+        	done
+	done
+	out $x $INT
+else
+	out 0 $INT
+fi
 
 
 echo
