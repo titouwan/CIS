@@ -1362,7 +1362,7 @@ done
 out $x $INT
 
 echo "### 10 OMT Specific"
-INT='10.1 root only used from VLAN 200'
+INT='10.1 root account is only used from VLAN 200'
 x=0
 for i in `last|awk {'if ($1=="root") print $3}'|cut -f3 -d.`
 do
@@ -1452,9 +1452,33 @@ else
 	out 0 $INT
 fi
 
-INT='10.4.2 Check for nosuid nfs mount option'
-grep nfs /etc/fstab|grep nosuid > /dev/null
-out $? $INT
+INT='10.4.2 Check for NFS syntax errors'
+if [ -f /etc/exports ]
+then
+	grep "[^0-9^a-z](" /etc/exports
+	out $(inv $?) $INT
+else
+	out 0 $INT
+fi
+
+INT='10.4.3 Check for nosuid nfs mount option'
+x=0
+for i in  `grep nfs /etc/fstab`
+do
+	echo $i| grep nosuid > /dev/null
+	let x=$x+$? 
+done
+out $x $INT
+
+INT='10.4.4 Check for nodev nfs mount option'
+x=0
+for i in  `grep nfs /etc/fstab`
+do
+        echo $i| grep nosuid > /dev/null 
+        let x=$x+$?
+done
+out $x $INT
+
 
 
 echo
