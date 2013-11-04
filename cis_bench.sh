@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://github.com/titouwan/CIS
+
 VERB=1
 #DEBUG=1
 score=0
@@ -697,6 +699,9 @@ out $? $INT
 out "0" "5.1.3" "TODO"
 #x=0
 #for i in "auth user kern daemon syslog lpr news uucp local"
+#do
+#
+#done
 #do
 #	prt=grep $i /etc/rsyslog.conf > /dev/null
 #	if [ $? -eq 0 ]
@@ -1428,6 +1433,8 @@ else
 fi
 out $x $INT
 
+#echo "10.3 Verify SNMPD configuration"
+
 INT='10.3.1 Verify that syslocation is provided'
 grep -i "^syslocation" /etc/snmp/snmpd.conf > /dev/null
 out $? $INT
@@ -1435,6 +1442,20 @@ out $? $INT
 INT='10.3.2 Verify that syscontact is provided'
 grep -i "^syscontact" /etc/snmp/snmpd.conf > /dev/null
 out $? $INT
+
+INT='10.4.1 Do not use "no_root_squash" NFS option'
+if [ -f /etc/exports ]
+then
+	grep "no_root_squash" /etc/exports > /dev/null
+	out $(inv $?) $INT
+else
+	out 0 $INT
+fi
+
+INT='10.4.2 Check for nosuid nfs mount option'
+grep nfs /etc/fstab|grep nosuid > /dev/null
+out $? $INT
+
 
 echo
 echo " ==> Score: $score"
