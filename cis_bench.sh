@@ -61,7 +61,7 @@ then
 	echo "This script must be run on RHEL"
 	exit 2
 else
-	grep Santiago /etc/redhat-release
+	grep Santiago /etc/redhat-release > /dev/null
 	if [ $? -ne 0 ]
 	then
 		echo "This script must be run on version 6 of RHEL"
@@ -1461,7 +1461,7 @@ else
 	out 0 $INT
 fi
 
-INT='10.4.3 Check for nosuid nfs mount option'
+INT='10.5.1 Check for nosuid nfs client mount option in /etc/fstab'
 x=0
 for i in  `grep nfs /etc/fstab`
 do
@@ -1470,15 +1470,43 @@ do
 done
 out $x $INT
 
-INT='10.4.4 Check for nodev nfs mount option'
+INT='10.5.2 Check for nosuid nfs client mount option in autofs'
+LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
+x=0
+for i in $LIST
+do
+	for j in `grep nfs $i`
+	do
+		echo $i| grep nosuid > /dev/null
+        	let x=$x+$?	
+	done
+done
+out $x $INT
+
+
+INT='10.5.3 Check for nodev nfs client mount option'
 x=0
 for i in  `grep nfs /etc/fstab`
 do
-        echo $i| grep nosuid > /dev/null 
+        echo $i| grep nodev > /dev/null 
         let x=$x+$?
 done
 out $x $INT
 
+INT='10.5.4 Check for nodev nfs client mount option in autofs'
+LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
+x=0
+for i in $LIST
+do
+	for j in `grep nfs $i`
+        do
+                echo $i| grep nodev > /dev/null
+                let x=$x+$?
+        done
+done
+out $x $INT
 
 
 echo
