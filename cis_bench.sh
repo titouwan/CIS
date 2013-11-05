@@ -1443,23 +1443,22 @@ INT='10.3.2 Verify that syscontact is provided'
 grep -i "^syscontact" /etc/snmp/snmpd.conf > /dev/null
 out $? $INT
 
-INT='10.4.1 Do not use "no_root_squash" NFS option'
+#echo "10.4 Verify NFS Server configuration"
+
 if [ -f /etc/exports ]
 then
-	grep "no_root_squash" /etc/exports > /dev/null
-	out $(inv $?) $INT
-else
-	out 0 $INT
-fi
+
+INT='10.4.1 Do not use "no_root_squash" NFS option'
+grep "no_root_squash" /etc/exports > /dev/null
+out $(inv $?) $INT
 
 INT='10.4.2 Check for NFS syntax errors'
-if [ -f /etc/exports ]
-then
-	grep "[^0-9^a-z](" /etc/exports
-	out $(inv $?) $INT
-else
-	out 0 $INT
+grep "[^0-9^a-z](" /etc/exports
+out $(inv $?) $INT
+
 fi
+
+#echo "10.5 Verify NFS CLient configuration"
 
 INT='10.5.1 Check for nosuid nfs client mount option in /etc/fstab'
 x=0
@@ -1470,54 +1469,128 @@ do
 done
 out $x $INT
 
-INT='10.5.2 Check for nosuid nfs client mount option in autofs'
-if [ -f /etc/auto.master ]
-then
-	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
-	LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
-	x=0
-	for i in $LIST
-	do
-		for j in `grep nfs $i`
-		do
-			echo $i| grep nosuid > /dev/null
-        		let x=$x+$?	
-		done
-	done
-	out $x $INT
-else
-	out 0 $INT
-fi
-
-
-INT='10.5.3 Check for nodev nfs client mount option'
+INT='10.5.2 Check for nodev nfs client mount option in /etc/fstab'
 x=0
 for i in  `grep nfs /etc/fstab`
 do
-        echo $i| grep nodev > /dev/null 
+        echo $i| grep nodev > /dev/null
         let x=$x+$?
 done
 out $x $INT
 
-INT='10.5.4 Check for nodev nfs client mount option in autofs'
 if [ -f /etc/auto.master ]
 then
-	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
-	LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
-	x=0
-	for i in $LIST
+LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
+
+INT='10.5.3 Check for nosuid nfs client mount option in autofs'
+x=0
+for i in $LIST
+do
+	for j in `grep nfs $i`
 	do
-		for j in `grep nfs $i`
-        	do
-                	echo $i| grep nodev > /dev/null
-                	let x=$x+$?
-        	done
+		echo $i| grep nosuid > /dev/null
+       		let x=$x+$?	
 	done
-	out $x $INT
-else
-	out 0 $INT
+done
+out $x $INT
+
+INT='10.5.4 Check for nodev nfs client mount option in autofs'
+x=0
+for i in $LIST
+do
+	for j in `grep nfs $i`
+       	do
+               	echo $i| grep nodev > /dev/null
+               	let x=$x+$?
+       	done
+done
+out $x $INT
+
 fi
 
+/bin/rpm -q httpd > /dev/null
+if [ $? -eq 0 ]
+then
+
+LIST="/etc/httpd/conf/httpd.conf"
+LIST=`echo $LIST; grep "^Include" httpd.conf |awk '{print "/etc/httpd/"$2}'`
+
+INT='10.6.1 Check ServerTokens Apache directive'
+grep "^ServerTokens[[:space:]]*Prod" /etc/httpd/conf/httpd.conf > /dev/null
+out $? $INT
+
+INT='10.6.2 Check ServerSignature Apache directive'
+grep "^ServerSignature[[:space:]]*Off" /etc/httpd/conf/httpd.conf > /dev/null
+out $? $INT
+
+INT='10.6.3 Disable UserDir'
+grep "^[[:space:]]*UserDir[[:space:]]*disable" /etc/httpd/conf/httpd.conf > /dev/null
+out $? $INT
+
+INT='10.6.4 Check for permissive AllowOverride'
+x=0
+for i in $LIST
+do
+	grep "^[[:space:]]*AllowOverride[[:space:]][^None]" $i > /dev/null
+	let x=$x+$(inv $?)
+done
+out $x $INT
+
+INT='10.6.5 Apache server has its own user'
+grep "^User[[:space:]][apache|www-data|httpd]" /etc/httpd/conf/httpd.conf > /dev/null
+out $? $INT
+
+INT='10.6.6 Apache server has its own group'
+grep "^Group[[:space:]][apache|www-data|httpd]" /etc/httpd/conf/httpd.conf > /dev/null
+out $? $INT
+
+INT='10.6.7 No usage of +Indexes options'
+for i in $LIST
+do
+	grep "^[[:space:]]*Options[[:space:]]*[^-][+]*Indexes" $i > /dev/null
+	let x=$x+$(inv $?)
+done
+out $x $INT
+
+INT='10.6.8 No usage of +Includes options'
+for i in $LIST
+do
+        grep "^[[:space:]]*Options[[:space:]]*[^-][+]*Includes" $i > /dev/null
+        let x=$x+$(inv $?)
+done
+out $x $INT
+
+INT='10.6.9 No usage of +ExecCGI options'
+for i in $LIST
+do
+        grep "^[[:space:]]*Options[[:space:]]*[^-][+]*ExecCGI" $i > /dev/null
+        let x=$x+$(inv $?)
+done
+out $x $INT
+
+INT='10.6.10 No usage of +FollowSymLinks options'
+for i in $LIST
+do
+        grep "^[[:space:]]*Options[[:space:]]*[^-][+]*FollowSymLinks" $i > /dev/null
+        let x=$x+$(inv $?)
+done
+out $x $INT
+
+INT='10.6.11 Apache runs mod_security'
+grep "^LoadModule.*mod_security2.so$" /etc/httpd/conf/httpd.conf > /dev/null
+out $? $INT
+
+INT='10.6.12 Timeout is under 300'
+tmt=`grep "^Timeout[[:space:]]" /etc/httpd/conf/httpd.conf| awk '{print $2}'`
+if [ $tmt -lt 300 ]
+then
+	out 0 $INT
+else
+	out 1 $INT
+fi
+
+fi
 
 echo
 echo " ==> Score: $score"
