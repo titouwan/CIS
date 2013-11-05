@@ -1630,6 +1630,18 @@ out $(inv $?) $INT
 
 fi
 
+INT='10.7.1 DROP default policy in iptables INPUT'
+iptables -L INPUT| head -1| grep DROP >/dev/null
+out $? $INT
+
+INT='10.7.2 DROP default policy in iptables OUTPUT'
+iptables -L OUTPUT| head -1| grep DROP >/dev/null
+out $? $INT
+
+INT='10.7.3 DROP default policy in iptables FORWARD'
+iptables -L FORWARD| head -1| grep DROP >/dev/null
+out $? $INT
+
 echo
 echo " ==> Score: $score"
 echo
