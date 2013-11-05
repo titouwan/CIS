@@ -1589,43 +1589,43 @@ else
 fi
 
 INT='10.6.13 Do not load cgi module'
-/usr/sbin/apachectl 2>&1| grep cgi_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep cgi_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.14 Do not load userdir module'
-/usr/sbin/apachectl 2>&1| grep userdir_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep userdir_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.15 Do not load dav module'
-/usr/sbin/apachectl 2>&1| grep dav_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep dav_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.16 Do not load dav_fs module'
-/usr/sbin/apachectl 2>&1| grep dav_fs_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep dav_fs_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.17 Do not load info module'
-/usr/sbin/apachectl 2>&1| grep info_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep info_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.18 Do not load autoindex module'
-/usr/sbin/apachectl 2>&1| grep autoindex_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep autoindex_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.19 Do not load suexec module'
-/usr/sbin/apachectl 2>&1| grep suexec_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep suexec_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.20 Do not load mysql_auth module'
-/usr/sbin/apachectl 2>&1| grep mysql_auth_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep mysql_auth_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.21 Do not load proxy_ftp module'
-/usr/sbin/apachectl 2>&1| grep proxy_ftp_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep proxy_ftp_module >/dev/null
 out $(inv $?) $INT
 
 INT='10.6.22 Do not load autoindex module'
-/usr/sbin/apachectl 2>&1| grep autoindex_module >/dev/null
+/usr/sbin/apachectl -t -D DUMP_MODULES 2>&1| grep autoindex_module >/dev/null
 out $(inv $?) $INT
 
 fi
