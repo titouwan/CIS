@@ -1478,8 +1478,11 @@ out $x $INT
 
 if [ -f /etc/auto.master ]
 then
-LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
-LIST=`echo $LIST;  find /etc/auto.master.d -maxdepth 1 -type f`
+	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+	if [ -d /etc/auto.master.d ]
+	then
+		LIST=`echo $LIST;  find /etc/auto.master.d -maxdepth 1 -type f`
+	fi
 
 INT='10.5.3 Check for nosuid nfs client mount option in autofs'
 x=0
