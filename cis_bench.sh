@@ -1479,7 +1479,7 @@ out $x $INT
 if [ -f /etc/auto.master ]
 then
 LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
-LIST=`echo $LIST;  find /etc/auto.master.d -axdepth 1 -type f`
+LIST=`echo $LIST;  find /etc/auto.master.d -maxdepth 1 -type f`
 
 INT='10.5.3 Check for nosuid nfs client mount option in autofs'
 x=0
@@ -1630,17 +1630,27 @@ out $(inv $?) $INT
 
 fi
 
-INT='10.7.1 DROP default policy in iptables INPUT'
+INT='10.7.1 DROP as default iptables INPUT policy'
 iptables -L INPUT| head -1| grep DROP >/dev/null
 out $? $INT
 
-INT='10.7.2 DROP default policy in iptables OUTPUT'
+INT='10.7.2 DROP as default iptables OUTPUT policy'
 iptables -L OUTPUT| head -1| grep DROP >/dev/null
 out $? $INT
 
-INT='10.7.3 DROP default policy in iptables FORWARD'
+INT='10.7.3 DROP as default iptables FORWARD policy'
 iptables -L FORWARD| head -1| grep DROP >/dev/null
 out $? $INT
+
+INT='10.8.1 Check that screen is installed'
+/bin/rpm -q screen > /dev/null
+out $? $INT
+
+INT='10.9.1 Check that AD auth is used'
+/bin/rpm -q krb5-workstation
+/bin/rpm -q pam_krb5
+grep "CORP.OMT.LCL" /etc/krb5.conf >/dev/null
+
 
 echo
 echo " ==> Score: $score"
