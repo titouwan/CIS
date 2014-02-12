@@ -1478,7 +1478,7 @@ out $x $INT
 
 if [ -f /etc/auto.master ]
 then
-	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"`
+	LIST=`grep -v "^#" /etc/auto.master|grep -v "^+"|awk '{print $2}'|grep -v "^-"`
 	if [ -d /etc/auto.master.d ]
 	then
 		LIST=`echo $LIST;  find /etc/auto.master.d -maxdepth 1 -type f`
