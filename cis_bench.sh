@@ -1520,7 +1520,7 @@ if [ $? -eq 0 ]
 then
 
 LIST="/etc/httpd/conf/httpd.conf"
-LIST=`echo $LIST; grep "^Include" httpd.conf |awk '{print "/etc/httpd/"$2}'`
+LIST=`echo $LIST; grep "^Include" /etc/httpd/conf/httpd.conf |awk '{print "/etc/httpd/"$2}'`
 
 INT='10.6.1 Check ServerTokens Apache directive'
 grep "^ServerTokens[[:space:]]*Prod" /etc/httpd/conf/httpd.conf > /dev/null
