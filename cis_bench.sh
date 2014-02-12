@@ -1655,9 +1655,21 @@ INT='10.8.1 Check that screen is installed'
 out $? $INT
 
 INT='10.9.1 Check that AD auth is used'
-/bin/rpm -q krb5-workstation
-/bin/rpm -q pam_krb5
-grep "CORP.OMT.LCL" /etc/krb5.conf >/dev/null
+/bin/rpm -q krb5-workstation > /dev/null
+x=$?
+/bin/rpm -q pam_krb5 > /dev/null
+let x=$x+$?
+out $x $INT
+
+INT='10.9.2 OMT Domain comtroller is used'
+if [ -f /etc/krb5.conf ]
+then
+	grep "CORP.OMT.LCL" /etc/krb5.conf >/dev/null
+	x=$?
+else
+	x=1
+fi
+out $x $INT
 
 
 echo
