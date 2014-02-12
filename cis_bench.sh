@@ -2,7 +2,7 @@
 
 # https://github.com/titouwan/CIS
 
-VERB=1
+VERB=0
 score=0
 
 function inv {
@@ -45,6 +45,11 @@ function out {
 		printf "%-10.9s %-90.89s %-10.9s \n" "$NUM" "$TIT" "$RESULT"
 	fi
 }
+
+case $1 in
+	"-v")	VERB=1
+		;;
+esac
 
 # Make sure only root can run our script
 if [[ $EUID -ne 0 ]]
