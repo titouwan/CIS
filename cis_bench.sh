@@ -1544,11 +1544,11 @@ done
 out $x $INT
 
 INT='10.6.5 Apache server has its own user'
-grep "^User[[:space:]][apache|www-data|httpd]" /etc/httpd/conf/httpd.conf > /dev/null
+grep "^User[[:space:]][apache|www\-data|httpd]" /etc/httpd/conf/httpd.conf > /dev/null
 out $? $INT
 
 INT='10.6.6 Apache server has its own group'
-grep "^Group[[:space:]][apache|www-data|httpd]" /etc/httpd/conf/httpd.conf > /dev/null
+grep "^Group[[:space:]][apache|www\-data|httpd]" /etc/httpd/conf/httpd.conf > /dev/null
 out $? $INT
 
 INT='10.6.7 No usage of +Indexes options'
